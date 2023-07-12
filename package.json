@@ -1,0 +1,22 @@
+{
+    "name": "watch-together-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.2",
+        "express-ws": "^5.0.2",
+        "ws": "^8.13.0"
+    },
+    "optionalDependencies": {
+        "utf-8-validate": "^6.0.3"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
+}
