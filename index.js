@@ -251,21 +251,21 @@ function createRoomHandler(ws, parsedMessage) {
             users: [ws],
             owner: ws,
             items: [
-                {
-                    imgUrl: "https://i.ytimg.com/vi/o2HhFAWh-rs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCQGIYTzUx6MHANlhHZKx0ofjiZvg",
-                    title: "Dido - Thank You (Thunderstorm Remix) 1 Hour Loop",
-                    ytUrl: "https://www.youtube.com/watch?v=o2HhFAWh-rs",
-                },
-                {
-                    imgUrl: "https://i.ytimg.com/vi/iZEca2A3tS4/hq720.jpg?sqp=-oaymwExCNAFEJQDSFryq4qpAyMIARUAAIhCGAHwAQH4Af4JgALQBYoCDAgAEAEYZSBlKGUwDw==&rs=AOn4CLB5DlzIJqKTYfEklJflqOFvzALL9w",
-                    title: "INSTASAMKA - ЗА ДЕНЬГИ ДА (prod. realmoneyken)",
-                    ytUrl: "https://www.youtube.com/watch?v=iZEca2A3tS4",
-                },
-                {
-                    imgUrl: "https://i.ytimg.com/vi/vmqAAitN_QY/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLB7_2nrLb36I-5qs9dtI0Oy9tUFyw",
-                    title: "ЧИПСЫ ЗА 1$ vs 860$",
-                    ytUrl: "https://www.youtube.com/watch?v=vmqAAitN_QY",
-                },
+                // {
+                //     imgUrl: "https://i.ytimg.com/vi/o2HhFAWh-rs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCQGIYTzUx6MHANlhHZKx0ofjiZvg",
+                //     title: "Dido - Thank You (Thunderstorm Remix) 1 Hour Loop",
+                //     ytUrl: "https://www.youtube.com/watch?v=o2HhFAWh-rs",
+                // },
+                // {
+                //     imgUrl: "https://i.ytimg.com/vi/iZEca2A3tS4/hq720.jpg?sqp=-oaymwExCNAFEJQDSFryq4qpAyMIARUAAIhCGAHwAQH4Af4JgALQBYoCDAgAEAEYZSBlKGUwDw==&rs=AOn4CLB5DlzIJqKTYfEklJflqOFvzALL9w",
+                //     title: "INSTASAMKA - ЗА ДЕНЬГИ ДА (prod. realmoneyken)",
+                //     ytUrl: "https://www.youtube.com/watch?v=iZEca2A3tS4",
+                // },
+                // {
+                //     imgUrl: "https://i.ytimg.com/vi/vmqAAitN_QY/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLB7_2nrLb36I-5qs9dtI0Oy9tUFyw",
+                //     title: "ЧИПСЫ ЗА 1$ vs 860$",
+                //     ytUrl: "https://www.youtube.com/watch?v=vmqAAitN_QY",
+                // },
             ],
             currentItem: "",
             currentTime: 0,
