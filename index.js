@@ -6,18 +6,18 @@ const aWss = WSServer.getWss();
 const http = require("http");
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST;
+// const HOST = process.env.HOST;
 
-const server = http
-    .createServer((req, res) => {
-        console.log("server request");
+// const server = http
+//     .createServer((req, res) => {
+//         console.log("server request");
 
-        res.write("abc");
-        res.end();
-    })
-    .listen(PORT, HOST, (error) => {
-        error ? console.log(error) : console.log("listening port ", PORT);
-    });
+//         res.write("abc");
+//         res.end();
+//     })
+//     .listen(PORT, HOST, (error) => {
+//         error ? console.log(error) : console.log("listening port ", PORT);
+//     });
 
 let rooms = {
     // example: {
