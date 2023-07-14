@@ -1,5 +1,4 @@
-import cors from "cors";
-
+const cors = requre("cors");
 const express = require("express");
 const app = express();
 const WSServer = require("express-ws")(app);
