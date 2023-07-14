@@ -1,3 +1,5 @@
+import cors from "cors";
+
 const express = require("express");
 const app = express();
 const WSServer = require("express-ws")(app);
@@ -36,6 +38,8 @@ let rooms = {
     //     isPlay: false,
     // },
 };
+
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("abc");
