@@ -11,9 +11,7 @@ const server = http
     .createServer((req, res) => {
         console.log("server request");
     })
-    .listen(PORT, "localhost", (error) => {
-        error ? console.log(error) : console.log("listening port ", PORT);
-    });
+    .listen(PORT);
 
 let rooms = {
     // example: {
