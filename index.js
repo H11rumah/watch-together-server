@@ -3,9 +3,10 @@ const app = express();
 const WSServer = require("express-ws")(app);
 const aWss = WSServer.getWss();
 
-const http = require("https");
+const http = require("http");
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST;
 
 const server = http
     .createServer((req, res) => {
@@ -14,7 +15,7 @@ const server = http
         res.write("abc");
         res.end();
     })
-    .listen(PORT, "watch-togerther-server.onrender.com", (error) => {
+    .listen(PORT, HOST, (error) => {
         error ? console.log(error) : console.log("listening port ", PORT);
     });
 
