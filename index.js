@@ -1,4 +1,4 @@
-const cors = requre("cors");
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const WSServer = require("express-ws")(app);
