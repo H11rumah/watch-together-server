@@ -14,7 +14,7 @@ const server = http
         res.write("abc");
         res.end();
     })
-    .listen(PORT, "watch-togerther-server.onrender.com", (error) => {
+    .listen(PORT, "0.0.0.0", (error) => {
         error ? console.log(error) : console.log("listening port ", PORT);
     });
 
