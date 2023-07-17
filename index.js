@@ -41,7 +41,7 @@ let rooms = {
 app.use(cors());
 
 app.get("/", (req, res) => {
-    res.send("abc");
+    res.send("");
 });
 
 app.ws("/", (ws) => {
