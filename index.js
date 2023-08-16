@@ -16,6 +16,8 @@ let rooms = {
     //     imgUrl: "https://i.ytimg.com/vi/o2HhFAWh-rs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCQGIYTzUx6MHANlhHZKx0ofjiZvg",
     //     title: "Dido - Thank You (Thunderstorm Remix) 1 Hour Loop",
     //     ytUrl: "https://www.youtube.com/watch?v=o2HhFAWh-rs",
+    //     playlistId: 'exampleId',
+    //     playlistTitle: 'title123'
     // }
     // ],
     //     currentItem: "",
@@ -90,6 +92,10 @@ app.ws("/", (ws) => {
                 deleteVideoHandler(parsedMessage);
                 break;
 
+            case "deletePlaylist":
+                deletePlaylistHandler(parsedMessage);
+                break;
+
             case "setIsRepeatVideo":
                 setIsRepeatVideoHandler(parsedMessage);
                 break;
@@ -157,12 +163,12 @@ function leaveTheRoomHandler(ws, parsedMessage) {
 }
 
 function setVideoHandler(parsedMessage) {
-    rooms[parsedMessage.roomId].currentItem = parsedMessage.link;
+    rooms[parsedMessage.roomId].currentItem = parsedMessage.url;
 
     broadcast(
         {
             method: "setVideo",
-            link: parsedMessage.link,
+            url: parsedMessage.url,
         },
         parsedMessage.roomId
     );
@@ -340,7 +346,11 @@ function saveCurrentPlayerTimeHandler(parsedMessage) {
 }
 
 function addVideoHandler(parsedMessage) {
-    rooms[parsedMessage.roomId].items.push(parsedMessage.item);
+    if (Array.isArray(parsedMessage.item)) {
+        rooms[parsedMessage.roomId].items = [...rooms[parsedMessage.roomId].items, ...parsedMessage.item];
+    } else {
+        rooms[parsedMessage.roomId].items.push(parsedMessage.item);
+    }
 
     broadcast(
         {
@@ -355,31 +365,54 @@ function deleteVideoHandler(parsedMessage) {
     if (rooms[parsedMessage.roomId].currentItem === parsedMessage.url) {
         let currentId = rooms[parsedMessage.roomId].items.findIndex((elem) => elem.ytUrl === parsedMessage.url);
 
-        if (rooms[parsedMessage.roomId].items[currentId + 1]) {
-            broadcast(
-                {
-                    method: "setVideo",
-                    link: rooms[parsedMessage.roomId].items[currentId + 1].ytUrl,
-                },
-                parsedMessage.roomId
-            );
+        let nextItem = rooms[parsedMessage.roomId].items[currentId + 1];
+        broadcast(
+            {
+                method: "setVideo",
+                url: nextItem ? rooms[parsedMessage.roomId].items[currentId + 1].ytUrl : "",
+            },
+            parsedMessage.roomId
+        );
 
-            rooms[parsedMessage.roomId].currentItem = rooms[parsedMessage.roomId].items[currentId + 1].ytUrl;
-        } else {
-            broadcast(
-                {
-                    method: "setVideo",
-                    link: "",
-                },
-                parsedMessage.roomId
-            );
-
-            rooms[parsedMessage.roomId].currentItem = "";
-        }
+        rooms[parsedMessage.roomId].currentItem = nextItem
+            ? rooms[parsedMessage.roomId].items[currentId + 1].ytUrl
+            : "";
     }
 
     rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter(
         (elem) => elem.ytUrl !== parsedMessage.url
+    );
+
+    broadcast(
+        {
+            method: "synchronizeItems",
+            items: rooms[parsedMessage.roomId].items,
+        },
+        parsedMessage.roomId
+    );
+}
+
+function deletePlaylistHandler(parsedMessage) {
+    let lastInPlaylist = rooms[parsedMessage.roomId].items.findLastIndex(
+        (elem) => elem.playlistId === parsedMessage.playlistId
+    );
+
+    let nextItem = rooms[parsedMessage.roomId].items[lastInPlaylist + 1];
+
+    broadcast(
+        {
+            method: "setVideo",
+            url: nextItem ? rooms[parsedMessage.roomId].items[lastInPlaylist + 1].ytUrl : "",
+        },
+        parsedMessage.roomId
+    );
+
+    rooms[parsedMessage.roomId].currentItem = nextItem
+        ? rooms[parsedMessage.roomId].items[lastInPlaylist + 1].ytUrl
+        : "";
+
+    rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter(
+        (elem) => elem.playlistId !== parsedMessage.playlistId
     );
 
     broadcast(
