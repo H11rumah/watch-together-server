@@ -393,7 +393,6 @@ function deleteVideoHandler(parsedMessage) {
 }
 
 function deletePlaylistHandler(parsedMessage) {
-    // @ts-ignore
     let lastInPlaylist = rooms[parsedMessage.roomId].items.findLastIndex(
         (elem) => elem.playlistId === parsedMessage.playlistId
     );
