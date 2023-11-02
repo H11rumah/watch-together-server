@@ -12,14 +12,14 @@ let rooms = {
     //     users: [],
     //     owner: "",
     //     items: [
-    // {
-    //     imgUrl: "https://i.ytimg.com/vi/o2HhFAWh-rs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCQGIYTzUx6MHANlhHZKx0ofjiZvg",
-    //     title: "Dido - Thank You (Thunderstorm Remix) 1 Hour Loop",
-    //     ytUrl: "https://www.youtube.com/watch?v=o2HhFAWh-rs",
-    //     playlistId: 'exampleId',
-    //     playlistTitle: 'title123'
-    // }
-    // ],
+    //         {
+    //             imgUrl: "https://i.ytimg.com/vi/o2HhFAWh-rs/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLCQGIYTzUx6MHANlhHZKx0ofjiZvg",
+    //             title: "Dido - Thank You (Thunderstorm Remix) 1 Hour Loop",
+    //             ytUrl: "https://www.youtube.com/watch?v=o2HhFAWh-rs",
+    //             playlistId: 'exampleId',
+    //             playlistTitle: 'title123'
+    //         },
+    //     ],
     //     currentItem: "",
     //     currentTime: 0,
     //     isPlay: false,
@@ -45,6 +45,10 @@ app.ws("/", (ws) => {
         switch (parsedMessage.method) {
             case "connection":
                 console.log(aWss.clients.size);
+                break;
+
+            case "reconnect":
+                reconnectHandler(ws, parsedMessage);
                 break;
 
             case "leaveTheRoom":
@@ -132,14 +136,48 @@ function checkRoomHandler(ws, parsedMessage) {
     );
 }
 
+function reconnectHandler(ws, parsedMessage) {
+    if (rooms[parsedMessage.roomId]) {
+        let userId = rooms[parsedMessage.roomId].users.findIndex((elem) => elem.username === parsedMessage.username);
+
+        rooms[parsedMessage.roomId].users[userId] = ws;
+
+        ws.username = parsedMessage.username;
+
+        if (rooms[parsedMessage.roomId].owner.username === parsedMessage.username) {
+            rooms[parsedMessage.roomId].owner = ws;
+        }
+
+        ws.send(
+            JSON.stringify({
+                method: "synchronizeItems",
+                items: rooms[parsedMessage.roomId].items,
+            })
+        );
+
+        ws.send(
+            JSON.stringify({
+                method: "synchronizePlayerItem",
+                currentItem: rooms[parsedMessage.roomId].currentItem,
+            })
+        );
+
+        ws.send(
+            JSON.stringify({
+                method: "synchronizePlayerTime",
+                time: rooms[parsedMessage.roomId].isPlay ? rooms[parsedMessage.roomId].currentTime + 1 : rooms[parsedMessage.roomId].currentTime,
+                isPlay: rooms[parsedMessage.roomId].isPlay,
+            })
+        );
+    }
+}
+
 function leaveTheRoomHandler(ws, parsedMessage) {
     if (parsedMessage.roomId && parsedMessage.username) {
         if (rooms[parsedMessage.roomId].users.length === 1) {
             delete rooms[parsedMessage.roomId];
         } else {
-            rooms[parsedMessage.roomId].users = rooms[parsedMessage.roomId].users.filter(
-                (elem) => elem.username !== parsedMessage.username
-            );
+            rooms[parsedMessage.roomId].users = rooms[parsedMessage.roomId].users.filter((elem) => elem.username !== parsedMessage.username);
 
             rooms[parsedMessage.roomId].owner = rooms[parsedMessage.roomId].users[0];
 
@@ -332,9 +370,7 @@ function synchronizePlayerTimeHandler(ws, parsedMessage) {
     ws.send(
         JSON.stringify({
             method: "synchronizePlayerTime",
-            time: rooms[parsedMessage.roomId].isPlay
-                ? rooms[parsedMessage.roomId].currentTime + 1
-                : rooms[parsedMessage.roomId].currentTime,
+            time: rooms[parsedMessage.roomId].isPlay ? rooms[parsedMessage.roomId].currentTime + 1 : rooms[parsedMessage.roomId].currentTime,
             isPlay: rooms[parsedMessage.roomId].isPlay,
         })
     );
@@ -374,14 +410,10 @@ function deleteVideoHandler(parsedMessage) {
             parsedMessage.roomId
         );
 
-        rooms[parsedMessage.roomId].currentItem = nextItem
-            ? rooms[parsedMessage.roomId].items[currentId + 1].ytUrl
-            : "";
+        rooms[parsedMessage.roomId].currentItem = nextItem ? rooms[parsedMessage.roomId].items[currentId + 1].ytUrl : "";
     }
 
-    rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter(
-        (elem) => elem.ytUrl !== parsedMessage.url
-    );
+    rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter((elem) => elem.ytUrl !== parsedMessage.url);
 
     broadcast(
         {
@@ -393,9 +425,7 @@ function deleteVideoHandler(parsedMessage) {
 }
 
 function deletePlaylistHandler(parsedMessage) {
-    let lastInPlaylist = rooms[parsedMessage.roomId].items.findLastIndex(
-        (elem) => elem.playlistId === parsedMessage.playlistId
-    );
+    let lastInPlaylist = rooms[parsedMessage.roomId].items.findLastIndex((elem) => elem.playlistId === parsedMessage.playlistId);
 
     let nextItem = rooms[parsedMessage.roomId].items[lastInPlaylist + 1];
 
@@ -407,13 +437,9 @@ function deletePlaylistHandler(parsedMessage) {
         parsedMessage.roomId
     );
 
-    rooms[parsedMessage.roomId].currentItem = nextItem
-        ? rooms[parsedMessage.roomId].items[lastInPlaylist + 1].ytUrl
-        : "";
+    rooms[parsedMessage.roomId].currentItem = nextItem ? rooms[parsedMessage.roomId].items[lastInPlaylist + 1].ytUrl : "";
 
-    rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter(
-        (elem) => elem.playlistId !== parsedMessage.playlistId
-    );
+    rooms[parsedMessage.roomId].items = rooms[parsedMessage.roomId].items.filter((elem) => elem.playlistId !== parsedMessage.playlistId);
 
     broadcast(
         {
